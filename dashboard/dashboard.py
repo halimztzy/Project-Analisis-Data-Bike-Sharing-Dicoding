@@ -8,6 +8,7 @@ from babel.numbers import format_currency
 sns.set(style='dark')
 
 # --- HELPER FUNCTIONS ---
+
 def create_daily_rentals_df(df):
     daily_rentals_df = df.resample(rule='D', on='dteday').agg({
         "cnt": "sum"
@@ -16,7 +17,8 @@ def create_daily_rentals_df(df):
     return daily_rentals_df
 
 def create_season_rentals_df(df):
-    season_rentals_df = df.groupby("season")[["casual", "registered"]].sum().reset_index()
+    season_rentals_df = df.groupby(
+        "season")[["casual", "registered"]].sum().reset_index()
     return season_rentals_df
 
 def create_weather_rentals_df(df):
@@ -36,7 +38,8 @@ all_df.reset_index(drop=True, inplace=True)
 with st.sidebar:
     st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
     st.markdown("### Bike Sharing Project")
-    st.markdown("Analisis data penyewaan sepeda berdasarkan parameter waktu dan cuaca.")
+    st.markdown(
+        "Analisis data penyewaan sepeda berdasarkan parameter waktu dan cuaca.")
 
 # --- MAIN PAGE ---
 st.header('Bike Sharing Dashboard 🚲')
@@ -63,7 +66,7 @@ else:
     end_date = date_range[0]
 
 # Filter data berdasarkan tanggal yang dipilih
-main_df = all_df[(all_df["dteday"] >= str(start_date)) & 
+main_df = all_df[(all_df["dteday"] >= str(start_date)) &
                  (all_df["dteday"] <= str(end_date))]
 
 # Menyiapkan berbagai dataframe hasil filter
@@ -93,11 +96,11 @@ with col3:
 st.subheader("Pola Penyewaan: Hari Kerja vs Hari Libur")
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.lineplot(
-    data=main_df, 
-    x='hr', 
-    y='cnt', 
-    hue='workingday', 
-    marker='o', 
+    data=main_df,
+    x='hr',
+    y='cnt',
+    hue='workingday',
+    marker='o',
     palette={0: 'blue', 1: 'orange'},
     ax=ax
 )
@@ -114,8 +117,10 @@ col_left, col_right = st.columns(2)
 with col_left:
     st.subheader("Penyewaan per Musim")
     fig, ax = plt.subplots(figsize=(10, 6))
-    season_melted = pd.melt(season_rentals_df, id_vars=['season'], value_vars=['casual', 'registered'])
-    sns.barplot(data=season_melted, x='season', y='value', hue='variable', palette='viridis', ax=ax)
+    season_melted = pd.melt(season_rentals_df, id_vars=[
+                            'season'], value_vars=['casual', 'registered'])
+    sns.barplot(data=season_melted, x='season', y='value',
+                hue='variable', palette='viridis', ax=ax)
     ax.set_ylabel("Total Penyewaan")
     st.pyplot(fig)
     st.write("**Insight:** Musim Gugur (Fall) merupakan puncak penyewaan tertinggi.")
@@ -124,14 +129,15 @@ with col_right:
     st.subheader("Dampak Kondisi Cuaca")
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.barplot(
-        data=weather_rentals_df.sort_values(by='cnt', ascending=False), 
-        x='weathersit', 
-        y='cnt', 
-        palette='magma', 
+        data=weather_rentals_df.sort_values(by='cnt', ascending=False),
+        x='weathersit',
+        y='cnt',
+        palette='magma',
         ax=ax
     )
     ax.set_ylabel("Rata-rata Penyewaan")
     st.pyplot(fig)
-    st.write("**Insight:** Cuaca cerah (Clear) mendominasi jumlah penyewaan dibandingkan cuaca hujan.")
+    st.write(
+        "**Insight:** Cuaca cerah (Clear) mendominasi jumlah penyewaan dibandingkan cuaca hujan.")
 
 st.caption('Copyright (c) Ansen Halim 2026')
